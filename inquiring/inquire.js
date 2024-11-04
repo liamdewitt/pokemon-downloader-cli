@@ -1,4 +1,5 @@
 import inquirer from "inquirer";
+import { fetchAllData } from "../fetching/pokeDataFetcher.js";
 
 const inquirePokemon = async () => {
   // inquirer.prompt returns a promise
@@ -25,14 +26,17 @@ const inquireInfo = async () => {
       { name: "Stats" },
       { name: "Sprites" },
       { name: "Artwork" },
-      // { name: "hp" },
-      // { name: "attack" },
-      // { name: "defense" },
-      // { name: "special" },
-      // { name: "special-defense" },
-      // { name: "speed" },
     ],
+    validate(answer) {
+      if (answer.length === 0) {
+        return "You must choose at least on option";
+      }
+      return true;
+    },
   });
+  // .then((answers) => {
+  //   console.log(answers);
+  // });
 };
 // inquireInfo();
 
@@ -46,4 +50,20 @@ const inquireToContinue = async () => {
 };
 // inquireToContinue();
 
-export { inquireInfo, inquirePokemon, inquireToContinue };
+const promptUser = async () => {
+  while (true) {
+    const pokemonName = await inquirePokemon();
+    const fetchedPokemon = await fetchAllData(pokemonName.pokemon_name);
+    const { stats, sprites, artwork } = fetchedPokemon;
+    // console.log(stats);
+    const pokemonInfo = await inquireInfo();
+    if (pokemonInfo.options.includes("Stats")) console.log(stats);
+    if (pokemonInfo.options.includes("Sprites")) console.log(sprites);
+    if (pokemonInfo.options.includes("Artwork")) console.log(artwork);
+
+    const keepAskingUser = await inquireToContinue();
+    if (keepAskingUser.continue === "No") break;
+  }
+};
+promptUser();
+// export { inquireToContinue };

@@ -16,7 +16,6 @@ const fetchAllData = async (pokemonName) => {
     spritesPromise,
     artworkPromise,
   ]);
-  return console.log({ stats, sprites, artwork });
+  return { pokemonData, stats, sprites, artwork };
 };
-
-export { fetchAllData, fetchArtwork, fetchPokemon, fetchSprites, fetchStats };
+export { fetchAllData };
