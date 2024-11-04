@@ -29,8 +29,14 @@ const fetchSprites = async (data) => {
   const sprites = pokemon.sprites;
   const imagesMap = new Map();
   for (const [key, value] of Object.entries(sprites)) {
-    if (imagesMap.size < 8) {
-      imagesMap.set(key, value);
+    if (imagesMap.size < 8 && typeof value === "string") {
+      try {
+        const response = await fetch(value);
+        const arrayBuffer = await response.arrayBuffer();
+        imagesMap.set(key, arrayBuffer);
+      } catch (error) {
+        console.error(`Failed to fetch image for ${key}: ${error}`);
+      }
     }
   }
   return imagesMap;
