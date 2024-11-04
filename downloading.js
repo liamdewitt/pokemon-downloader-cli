@@ -16,7 +16,7 @@ const createFolder = async (folderName) => {
 };
 
 const createTextFile = async (fileName, insideFile) => {
-  await fs.writeFile(`${fileName}.txt`, insideFile);
+  await fs.writeFile(`${fileName}`, insideFile);
 };
 
 const createImageFile = async (fileName, imageBuffer) => {
@@ -36,7 +36,8 @@ const savePokemonStats = async (folderName, pokeStatsObj) => {
     statsString += `${statName}: ${num}\n`;
   }
   await createFolder(folderName);
-  const filePath = path.join(process.cwd(), folderName, "stats");
+  // checks for folder name in current path and adds filename
+  const filePath = path.join(process.cwd(), folderName, "stats.txt");
   await createTextFile(filePath, statsString);
 };
 // savePokemonStats("pikachu", stats);
@@ -44,9 +45,21 @@ const savePokemonStats = async (folderName, pokeStatsObj) => {
 const savePokemonSprites = async (folderName, pokeSpritesObject) => {
   await createFolder(folderName);
   for (const [key, value] of pokeSpritesObject) {
+    // checks for folder name in current path and adds filename
     const imagePath = path.join(process.cwd(), folderName, `${key}.png`);
     await createImageFile(imagePath, value);
   }
 };
-
 // savePokemonSprites("pikachu", sprites);
+
+const savePokemonArtwork = async (folderName, pokeArtworkObject) => {
+  await createFolder(folderName);
+  // checks for folder name in current path and adds filename
+  const imagePath = path.join(
+    process.cwd(),
+    folderName,
+    `${folderName}OfficialArtwork.png`
+  );
+  await createImageFile(imagePath, pokeArtworkObject);
+};
+// savePokemonArtwork("pikachu", artwork);
