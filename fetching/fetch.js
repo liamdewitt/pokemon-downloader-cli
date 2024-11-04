@@ -44,8 +44,11 @@ const fetchSprites = async (data) => {
 
 const fetchArtwork = async (data) => {
   const pokemon = data; // expecting json
-  const artworkObject = pokemon.sprites.other["official-artwork"].front_default;
-  return artworkObject;
+  const artworkObject = await fetch(
+    pokemon.sprites.other["official-artwork"].front_default
+  );
+  const arrayBuffer = await artworkObject.arrayBuffer();
+  return arrayBuffer;
 };
 
 export { fetchArtwork, fetchPokemon, fetchSprites, fetchStats };
