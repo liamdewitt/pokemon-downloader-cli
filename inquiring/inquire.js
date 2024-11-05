@@ -12,6 +12,7 @@ const inquirePokemon = async () => {
     type: "input",
     message: "Enter a Pokemon name:",
     name: "pokemon_name",
+    validate: (input) => input.trim() !== "" || "Pokemon name cannot be empty.",
   });
   result.pokemon_name = result.pokemon_name.toLowerCase();
   return result;
