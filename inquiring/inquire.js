@@ -1,4 +1,9 @@
 import inquirer from "inquirer";
+import {
+  savePokemonArtwork,
+  savePokemonSprites,
+  savePokemonStats,
+} from "../downloading.js";
 import { fetchAllData } from "../fetching/pokeDataFetcher.js";
 
 const inquirePokemon = async () => {
@@ -7,14 +12,10 @@ const inquirePokemon = async () => {
     type: "input",
     message: "Enter a Pokemon name:",
     name: "pokemon_name",
-    default() {
-      return "Pikachu"; // will default to 'pikachu' if user doesn't pick a pokemon
-    },
   });
   result.pokemon_name = result.pokemon_name.toLowerCase();
   return result;
 };
-// inquirePokemon();
 
 const inquireInfo = async () => {
   return await inquirer.prompt({
@@ -38,7 +39,6 @@ const inquireInfo = async () => {
   //   console.log(answers);
   // });
 };
-// inquireInfo();
 
 const inquireToContinue = async () => {
   return inquirer.prompt({
@@ -48,22 +48,29 @@ const inquireToContinue = async () => {
     choices: ["Yes", "No"],
   });
 };
-// inquireToContinue();
 
 const promptUser = async () => {
   while (true) {
     const pokemonName = await inquirePokemon();
+    const pokemonNameString = pokemonName.pokemon_name;
     const fetchedPokemon = await fetchAllData(pokemonName.pokemon_name);
     const { stats, sprites, artwork } = fetchedPokemon;
-    // console.log(stats);
     const pokemonInfo = await inquireInfo();
-    if (pokemonInfo.options.includes("Stats")) console.log(stats);
-    if (pokemonInfo.options.includes("Sprites")) console.log(sprites);
-    if (pokemonInfo.options.includes("Artwork")) console.log(artwork);
+
+    if (pokemonInfo.options.includes("Stats")) {
+      await savePokemonStats(pokemonNameString, stats);
+    }
+
+    if (pokemonInfo.options.includes("Sprites")) {
+      await savePokemonSprites(pokemonNameString, sprites);
+    }
+
+    if (pokemonInfo.options.includes("Artwork")) {
+      await savePokemonArtwork(pokemonNameString, artwork);
+    }
 
     const keepAskingUser = await inquireToContinue();
     if (keepAskingUser.continue === "No") break;
   }
 };
-promptUser();
-// export { inquireToContinue };
+export { promptUser };
