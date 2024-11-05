@@ -1,8 +1,5 @@
 import fs from "fs/promises";
 import path from "path";
-import { fetchAllData } from "./fetching/pokeDataFetcher.js";
-
-// console.log(process.cwd());
 
 const createFolder = async (folderName) => {
   const folderPath = path.join(process.cwd(), folderName);
@@ -11,7 +8,7 @@ const createFolder = async (folderName) => {
     await fs.access(folderPath);
   } catch (error) {
     // folder doesn't exist
-    fs.mkdir(folderPath);
+    await fs.mkdir(folderPath);
   }
 };
 
@@ -20,27 +17,19 @@ const createTextFile = async (fileName, insideFile) => {
 };
 
 const createImageFile = async (fileName, imageBuffer) => {
-  try {
-    await fs.writeFile(`${fileName}.png`, Buffer.from(imageBuffer));
-  } catch (error) {
-    console.error(`Error saving image ${fileName}: ${error.message}`);
-  }
+  await fs.writeFile(`${fileName}.png`, Buffer.from(imageBuffer));
 };
 
-const { sprites, artwork, stats } = await fetchAllData("pikachu");
-// console.log(sprites.get("back_default"));
-
 const savePokemonStats = async (folderName, pokeStatsObj) => {
+  await createFolder(folderName);
   let statsString = "";
   for (const [statName, num] of Object.entries(pokeStatsObj)) {
     statsString += `${statName}: ${num}\n`;
   }
-  await createFolder(folderName);
   // checks for folder name in current path and adds filename
   const filePath = path.join(process.cwd(), folderName, "stats.txt");
   await createTextFile(filePath, statsString);
 };
-// savePokemonStats("pikachu", stats);
 
 const savePokemonSprites = async (folderName, pokeSpritesObject) => {
   await createFolder(folderName);
@@ -50,7 +39,6 @@ const savePokemonSprites = async (folderName, pokeSpritesObject) => {
     await createImageFile(imagePath, value);
   }
 };
-// savePokemonSprites("pikachu", sprites);
 
 const savePokemonArtwork = async (folderName, pokeArtworkObject) => {
   await createFolder(folderName);
@@ -62,4 +50,5 @@ const savePokemonArtwork = async (folderName, pokeArtworkObject) => {
   );
   await createImageFile(imagePath, pokeArtworkObject);
 };
-// savePokemonArtwork("pikachu", artwork);
+
+export { savePokemonArtwork, savePokemonSprites, savePokemonStats };
