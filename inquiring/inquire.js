@@ -6,16 +6,46 @@ import {
 } from "../downloading.js";
 import { fetchAllData } from "../fetching/pokeDataFetcher.js";
 
+const isValidPokemonName = async (name) => {
+  try {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+    return response.ok;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
 const inquirePokemon = async () => {
-  // inquirer.prompt returns a promise
-  const result = await inquirer.prompt({
-    type: "input",
-    message: "Enter a Pokemon name:",
-    name: "pokemon_name",
-    validate: (input) => input.trim() !== "" || "Pokemon name cannot be empty.",
-  });
-  result.pokemon_name = result.pokemon_name.toLowerCase();
-  return result;
+  let valid = false;
+  let pokemonName = "";
+  while (!valid) {
+    // inquirer.prompt returns a promise
+    const result = await inquirer.prompt({
+      type: "input",
+      message: "Enter a Pokemon name:",
+      name: "pokemon_name",
+      //check to see if input.trim(), which removes white spaces, is an empty string, if it is, returns error message
+      validate: async (input) => {
+        const trimmedInput = input.trim();
+        if (trimmedInput === "") {
+          return "Pokemon name cannot be empty.";
+        }
+
+        // Validate the Pokemon name against the API
+        const isValid = await isValidPokemonName(trimmedInput.toLowerCase());
+        if (isValid) {
+          valid = true;
+          return true;
+        } else {
+          return "Please enter a valid Pokemon name.";
+        }
+      },
+    });
+
+    pokemonName = result.pokemon_name.trim().toLowerCase();
+  }
+  return pokemonName;
 };
 
 const inquireInfo = async () => {
@@ -50,21 +80,20 @@ const inquireToContinue = async () => {
 const promptUser = async () => {
   while (true) {
     const pokemonName = await inquirePokemon();
-    const pokemonNameString = pokemonName.pokemon_name;
-    const fetchedPokemon = await fetchAllData(pokemonName.pokemon_name);
+    const fetchedPokemon = await fetchAllData(pokemonName);
     const { stats, sprites, artwork } = fetchedPokemon;
     const pokemonInfo = await inquireInfo();
 
     if (pokemonInfo.options.includes("Stats")) {
-      await savePokemonStats(pokemonNameString, stats);
+      await savePokemonStats(pokemonName, stats);
     }
 
     if (pokemonInfo.options.includes("Sprites")) {
-      await savePokemonSprites(pokemonNameString, sprites);
+      await savePokemonSprites(pokemonName, sprites);
     }
 
     if (pokemonInfo.options.includes("Artwork")) {
-      await savePokemonArtwork(pokemonNameString, artwork);
+      await savePokemonArtwork(pokemonName, artwork);
     }
 
     const keepAskingUser = await inquireToContinue();
