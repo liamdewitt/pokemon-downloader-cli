@@ -51,12 +51,14 @@ Welcome to the Pokémon Downloader CLI! This tool allows users to interact with 
 ## Example:
 1. After selecting "Pikachu" (not case sensitive) and choosing all data options, the tool will create a folder structure like this:
 
-pokemon-downloader-cli/
-├── pikachu/
-│   ├── stats.txt              # Pokémon stats
-│   ├── front_default.png      # Pokémon sprite (front view)
-│   ├── back_default.png       # Pokémon sprite (back view)
-│   └── pikachuOfficialArtwork.png # Official artwork
+    ```bash
+    pokemon-downloader-cli/
+
+        ├── pikachu/
+        │   ├── stats.txt              # Pokémon stats
+        │   ├── front_default.png      # Pokémon sprite (front view)
+        │   ├── back_default.png       # Pokémon sprite (back view)
+        │   └── pikachuOfficialArtwork.png # Official artwork
 
 ## Contributing
 Contributions are welcome! Please open an issue or submit a pull request to discuss any changes.
