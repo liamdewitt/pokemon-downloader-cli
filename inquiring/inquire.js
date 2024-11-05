@@ -35,9 +35,6 @@ const inquireInfo = async () => {
       return true;
     },
   });
-  // .then((answers) => {
-  //   console.log(answers);
-  // });
 };
 
 const inquireToContinue = async () => {
